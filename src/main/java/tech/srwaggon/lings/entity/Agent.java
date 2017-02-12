@@ -1,17 +1,22 @@
 package tech.srwaggon.lings.entity;
 
+import com.google.common.eventbus.EventBus;
+
+import tech.srwaggon.lings.Game;
+import tech.srwaggon.lings.net.message.MoveMessage;
 import tech.srwaggon.lings.world.Tile;
-import tech.srwaggon.lings.world.World;
 
 public class Agent extends Entity {
 
   private static int ids = 0;
   private final int id;
-  private final World world;
+  private final Game game;
+  private EventBus eventBus;
 
-  public Agent(World world) {
+  public Agent(EventBus eventBus, Game game) {
+    this.eventBus = eventBus;
+    this.game = game;
     this.id = ids++;
-    this.world = world;
   }
 
   public String getSymbol() {
@@ -26,16 +31,22 @@ public class Agent extends Entity {
   }
 
   private Tile getTile() {
-    return world.get(x, y);
+    return this.game.world().tile(x, y);
   }
 
   public void move(int x, int y) {
     getTile().occupy(null);
-    world.get(x, y).occupy(this);
+    this.game.world().tile(x, y).occupy(this);
+    MoveMessage moveMessage = new MoveMessage(this.id, this.x, this.y);
+    eventBus.post(moveMessage);
   }
 
   @Override
   public String getString() {
     return String.format("agent id %d x %d y %d", id, x, y);
+  }
+
+  public int getId() {
+    return id;
   }
 }

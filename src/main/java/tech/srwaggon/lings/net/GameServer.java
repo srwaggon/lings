@@ -1,5 +1,7 @@
 package tech.srwaggon.lings.net;
 
+import com.google.common.eventbus.EventBus;
+
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -15,7 +17,9 @@ import tech.srwaggon.lings.Game;
 @Component
 public class GameServer {
 
-  private ExecutorService executorService = Executors.newFixedThreadPool(4);
+  private ExecutorService executorService = Executors.newCachedThreadPool();
+  @Inject
+  private EventBus eventBus;
   @Inject
   private Game game;
   @Inject
@@ -34,6 +38,8 @@ public class GameServer {
 
   private void handleConnection(Socket socket) throws IOException {
     System.out.println("Client connected: " + socket.getInetAddress().getHostName());
-    executorService.submit(new ClientHandler(socket, game));
+    ClientHandler clientHandler = new ClientHandler(new Connection(socket), game);
+    eventBus.register(clientHandler);
+    executorService.submit(clientHandler);
   }
 }

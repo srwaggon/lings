@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 @Configuration
-public class Config {
+public class NetworkConfiguration {
 
   @Bean
   public ServerSocket getServerSocket() throws IOException {

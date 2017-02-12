@@ -1,19 +1,26 @@
 package tech.srwaggon.lings.net;
 
+import com.google.common.eventbus.Subscribe;
+
 import java.io.IOException;
-import java.net.Socket;
 
 import tech.srwaggon.lings.Game;
 import tech.srwaggon.lings.entity.Agent;
+import tech.srwaggon.lings.net.message.MoveMessage;
 
 public class ClientHandler implements Runnable {
 
   private final Connection connection;
   private final Game game;
 
-  public ClientHandler(Socket socket, Game game) throws IOException {
-    this.connection = new Connection(socket);
+  public ClientHandler(Connection connection, Game game) throws IOException {
+    this.connection = connection;
     this.game = game;
+  }
+
+  @Subscribe
+  public void handleMove(MoveMessage moveMessage) {
+    connection.send(moveMessage.convert());
   }
 
   @Override
@@ -39,9 +46,8 @@ public class ClientHandler implements Runnable {
   }
 
   private void handleMessage(String msg) throws IOException {
-    System.out.println(msg);
+    System.out.println("Handling: " + msg);
     moveAgent(msg);
-    sendMap();
   }
 
   private void moveAgent(String msg) {
@@ -60,11 +66,11 @@ public class ClientHandler implements Runnable {
   }
 
   private void sendMap() throws IOException {
-    connection.send(game.getWorld().getString());
+    connection.send(game.world().getString());
   }
 
   private void sendEntities() {
-    for (Agent agent : game.getAgents()) {
+    for (Agent agent : game.getAgents().values()) {
       connection.send(agent.getString());
     }
   }

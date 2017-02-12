@@ -51,7 +51,7 @@ public class World {
     return result;
   }
 
-  public Tile get(int x, int y) {
+  public Tile tile(int x, int y) {
     return world[y % getNumRows()][x % getNumColumns()];
   }
 }

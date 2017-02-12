@@ -2,28 +2,34 @@ package tech.srwaggon.lings;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import tech.srwaggon.lings.entity.Agent;
+import tech.srwaggon.lings.entity.AgentManager;
 import tech.srwaggon.lings.world.World;
 
 @Component
 public class Game {
 
-  private World world = new World();
-  private List<Agent> entities = new ArrayList<>();
+  @Inject
+  private AgentManager agentManager;
 
-  public Game() {
-    entities.add(new Agent(world));
-    world.get(4, 0).addFood();
+  @Inject
+  private World world;
+
+  @PostConstruct
+  private void init() {
+    world.tile(4, 0).addFood();
   }
 
-  public World getWorld() {
+  public World world() {
     return world;
   }
 
-  public List<Agent> getAgents() {
-    return entities;
+  public Map<Integer, Agent> getAgents() {
+    return agentManager.getAll();
   }
 }
