@@ -1,0 +1,7 @@
+1. Client connects.
+2. Server sends game map composed of tiles.
+    2a. e.g. map col 5 row 5 .........................\n
+3. Server sends collection of agents to client.
+    3a. e.g. agent id 3 x 4 y 5\n
+4. Server adds entity to game.
+    4a. Server broadcasts entity added to map.
