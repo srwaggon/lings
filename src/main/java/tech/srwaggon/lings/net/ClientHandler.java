@@ -51,14 +51,9 @@ public class ClientHandler implements Runnable {
   }
 
   private void moveAgent(String msg) {
-    String[] coords = msg.split(" ");
-    int id = Integer.parseInt(coords[0]);
-    int x = Integer.parseInt(coords[1]);
-    int y = Integer.parseInt(coords[2]);
-
-    Agent agent = game.getAgents().get(id);
-
-    agent.move(x, y);
+    MoveMessage moveMessage = MoveMessage.parse(msg);
+    Agent agent = game.getAgents().get(moveMessage.getId());
+    agent.move(moveMessage.getX(), moveMessage.getY());
   }
 
   private void sendId() {
