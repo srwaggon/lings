@@ -1,9 +1,16 @@
 group 'tech.srwaggon'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'application'
+apply plugin: 'idea'
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
+
+sourceSets.main.java
+sourceSets.test.java
+
+mainClassName = 'tech.srwaggon.lings.Main'
 
 repositories {
     mavenCentral()
