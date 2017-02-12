@@ -1,5 +1,8 @@
 package tech.srwaggon.lings.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -10,6 +13,8 @@ public class Connection {
   private Socket socket;
   private Scanner in = null;
   private PrintWriter out = null;
+
+  private final Logger logger = LoggerFactory.getLogger(Connection.class);
 
   public Connection(String ip, int port) {
     try {
@@ -67,7 +72,7 @@ public class Connection {
 
   public void disconnect() {
     try {
-      System.out.println("Disconnecting from " + this + ".");
+      logger.info("Disconnecting from " + this + ".");
       if (in != null) {
         in.close();
       }

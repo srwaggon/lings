@@ -49,4 +49,8 @@ public class Agent extends Entity {
   public int getId() {
     return id;
   }
+
+  public static int getIds() {
+    return ids;
+  }
 }

@@ -2,6 +2,9 @@ package tech.srwaggon.lings.net;
 
 import com.google.common.eventbus.Subscribe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 import tech.srwaggon.lings.Game;
@@ -12,6 +15,8 @@ public class ClientHandler implements Runnable {
 
   private final Connection connection;
   private final Game game;
+
+  private final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 
   public ClientHandler(Connection connection, Game game) throws IOException {
     this.connection = connection;
@@ -36,7 +41,7 @@ public class ClientHandler implements Runnable {
     } catch (IOException | InterruptedException e) {
       e.printStackTrace();
     }
-    System.out.println("Connection Died");
+    logger.info("Connection Died");
   }
 
   private void handleAnyInput() throws IOException {
@@ -46,7 +51,7 @@ public class ClientHandler implements Runnable {
   }
 
   private void handleMessage(String msg) throws IOException {
-    System.out.println("Handling: " + msg);
+    logger.debug("Handling: " + msg);
     moveAgent(msg);
   }
 
@@ -57,7 +62,7 @@ public class ClientHandler implements Runnable {
   }
 
   private void sendId() {
-    connection.send("0");
+    connection.send("" + Agent.getIds());
   }
 
   private void sendMap() throws IOException {

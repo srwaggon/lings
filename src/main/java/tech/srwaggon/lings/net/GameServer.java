@@ -2,6 +2,8 @@ package tech.srwaggon.lings.net;
 
 import com.google.common.eventbus.EventBus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,10 +27,12 @@ public class GameServer {
   @Inject
   private ServerSocket serverSocket;
 
+  private Logger logger = LoggerFactory.getLogger(GameServer.class);
+
   public void runOnline() {
     try {
       while (true) {
-        System.out.println("Waiting for connection...");
+        logger.info("Waiting for connection...");
         handleConnection(serverSocket.accept());
       }
     } catch (IOException e) {
@@ -37,7 +41,7 @@ public class GameServer {
   }
 
   private void handleConnection(Socket socket) throws IOException {
-    System.out.println("Client connected: " + socket.getInetAddress().getHostName());
+    logger.info("Client connected: " + socket.getInetAddress().getHostName());
     ClientHandler clientHandler = new ClientHandler(new Connection(socket), game);
     eventBus.register(clientHandler);
     executorService.submit(clientHandler);

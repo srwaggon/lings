@@ -23,6 +23,8 @@ public class Game {
   @PostConstruct
   private void init() {
     world.tile(4, 0).addFood();
+    Agent agent = agentManager.newAgent();
+    world.tile(0, 0).occupy(agent);
   }
 
   public World world() {
