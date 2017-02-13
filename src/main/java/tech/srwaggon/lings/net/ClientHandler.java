@@ -9,7 +9,10 @@ import java.io.IOException;
 
 import tech.srwaggon.lings.Game;
 import tech.srwaggon.lings.entity.Agent;
-import tech.srwaggon.lings.net.message.MoveMessage;
+import tech.srwaggon.lings.net.message.ActionMessage;
+import tech.srwaggon.lings.net.message.FoodAppearedMessage;
+import tech.srwaggon.lings.net.message.action.AbstractActionMessage;
+import tech.srwaggon.lings.net.message.action.MoveMessage;
 
 public class ClientHandler implements Runnable {
 
@@ -24,19 +27,24 @@ public class ClientHandler implements Runnable {
   }
 
   @Subscribe
-  public void handleMove(MoveMessage moveMessage) {
-    connection.send(moveMessage.convert());
+  public void handleAction(AbstractActionMessage actionMessage) throws IOException {
+    connection.sendJson(new ActionMessage(actionMessage));
+  }
+
+  @Subscribe
+  public void handleFood(FoodAppearedMessage message) {
+    connection.sendJson(message);
   }
 
   @Override
   public void run() {
     try {
-      sendId();
       sendMap();
       sendEntities();
+      connection.sendJson(new ActionMessage(new MoveMessage(game.getAgents().get(0))));
       while (true) {
         handleAnyInput();
-        Thread.sleep(500);
+        Thread.sleep(10);
       }
     } catch (IOException | InterruptedException e) {
       e.printStackTrace();
@@ -46,32 +54,19 @@ public class ClientHandler implements Runnable {
 
   private void handleAnyInput() throws IOException {
     if (connection.hasLine()) {
-      handleMessage(connection.readLine());
+      ActionMessage actionMessage = connection.readJson(ActionMessage.class);
+      actionMessage.getAction().perform(game);
+      game.getWorld().print();
     }
   }
 
-  private void handleMessage(String msg) throws IOException {
-    logger.debug("Handling: " + msg);
-    moveAgent(msg);
-  }
-
-  private void moveAgent(String msg) {
-    MoveMessage moveMessage = MoveMessage.parse(msg);
-    Agent agent = game.getAgents().get(moveMessage.getId());
-    agent.move(moveMessage.getX(), moveMessage.getY());
-  }
-
-  private void sendId() {
-    connection.send("" + Agent.getIds());
-  }
-
   private void sendMap() throws IOException {
-    connection.send(game.world().getString());
+    connection.sendJson(game.getWorld());
   }
 
-  private void sendEntities() {
-    for (Agent agent : game.getAgents().values()) {
-      connection.send(agent.getString());
+  private void sendEntities() throws IOException {
+    for (Agent agent : game.getAgentManager().getAgents().values()) {
+      connection.sendJson(agent);
     }
   }
 }

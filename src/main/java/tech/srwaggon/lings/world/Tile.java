@@ -1,29 +1,48 @@
 package tech.srwaggon.lings.world;
 
-import tech.srwaggon.lings.entity.Entity;
+import com.google.common.eventbus.EventBus;
+
+import tech.srwaggon.lings.entity.Agent;
+import tech.srwaggon.lings.net.message.FoodAppearedMessage;
 
 public class Tile {
 
-  private Entity occupant;
+  private final int x;
+  private final int y;
+  private final EventBus eventBus;
+  private Agent occupant;
   private boolean hasFood;
 
-  public String getSymbol() {
-    return occupant != null ? occupant.getSymbol() : this.hasFood ? "F" : ".";
+  public Tile(int x, int y, EventBus eventBus) {
+    this.x = x;
+    this.y = y;
+    this.eventBus = eventBus;
   }
 
-  public void occupy(Entity entity) {
-    this.occupant = entity;
+  public String getSymbol() {
+    return this.hasFood ? "F" : ".";
+  }
+
+  public void occupy(Agent agent) {
+    this.occupant = agent;
+  }
+
+  public boolean isOccupied() {
+    return occupant != null;
+  }
+
+  public Agent getOccupant() {
+    return occupant;
   }
 
   public void addFood() {
     this.hasFood = true;
+    eventBus.post(FoodAppearedMessage.builder().x(x).y(y).build());
   }
 
-  public boolean hasFood() {
-    return hasFood;
-  }
-
-  public void consume() {
+  public boolean consume() {
+    boolean result = this.hasFood;
     this.hasFood = false;
+    return result;
   }
 }

@@ -30,14 +30,32 @@ public class GameServer {
   private Logger logger = LoggerFactory.getLogger(GameServer.class);
 
   public void runOnline() {
+    addFoodEvery5sec();
+
+    game.getAgentManager().newAgent(0);
     try {
       while (true) {
         logger.info("Waiting for connection...");
-        handleConnection(serverSocket.accept());
+        Socket accept = serverSocket.accept();
+
+        handleConnection(accept);
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  private void addFoodEvery5sec() {
+    executorService.submit(() -> {
+      while (true) {
+        game.getWorld().getTile(getNum(), getNum()).addFood();
+        try {
+          Thread.sleep(10000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    });
   }
 
   private void handleConnection(Socket socket) throws IOException {
@@ -45,5 +63,9 @@ public class GameServer {
     ClientHandler clientHandler = new ClientHandler(new Connection(socket), game);
     eventBus.register(clientHandler);
     executorService.submit(clientHandler);
+  }
+
+  private int getNum() {
+    return (int) (Math.random() * game.getWorld().getNumColumns());
   }
 }

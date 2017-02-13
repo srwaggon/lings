@@ -1,5 +1,6 @@
 package tech.srwaggon.lings.net;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ public class Connection {
   private Socket socket;
   private Scanner in = null;
   private PrintWriter out = null;
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   private final Logger logger = LoggerFactory.getLogger(Connection.class);
 
@@ -49,8 +51,17 @@ public class Connection {
   }
 
   public void send(String msg) {
+    logger.trace("sending: " + msg);
     out.println(msg);
     out.flush();
+  }
+
+  public void sendJson(Object obj) {
+    try {
+      send(objectMapper.writeValueAsString(obj));
+    } catch (IOException e) {
+      logger.error("Error serializing object into JSON: ", e);
+    }
   }
 
   public boolean hasNext() {
@@ -66,9 +77,14 @@ public class Connection {
   }
 
   public String readLine() {
-    return in.nextLine();
+    String line = in.nextLine();
+    logger.trace("reading: " + line);
+    return line;
   }
 
+  public <T> T readJson(Class<? extends T> clazz) throws IOException {
+    return objectMapper.readValue(readLine(), clazz);
+  }
 
   public void disconnect() {
     try {

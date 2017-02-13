@@ -1,1 +1,1 @@
-logging.level.tech.srwaggon: debug
+logging.level.tech.srwaggon: trace

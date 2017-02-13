@@ -7,11 +7,13 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import lombok.Data;
 import tech.srwaggon.lings.entity.Agent;
 import tech.srwaggon.lings.entity.AgentManager;
 import tech.srwaggon.lings.world.World;
 
 @Component
+@Data
 public class Game {
 
   @Inject
@@ -20,18 +22,7 @@ public class Game {
   @Inject
   private World world;
 
-  @PostConstruct
-  private void init() {
-    world.tile(4, 0).addFood();
-    Agent agent = agentManager.newAgent();
-    world.tile(0, 0).occupy(agent);
-  }
-
-  public World world() {
-    return world;
-  }
-
   public Map<Integer, Agent> getAgents() {
-    return agentManager.getAll();
+    return agentManager.getAgents();
   }
 }
