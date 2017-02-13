@@ -1,0 +1,5 @@
+1. Handle removing old clients when socket disconnects.
+2. Remove entity from board when client disconnects.
+3. Add barriers tiles.
+4. Create a regular game clock.
+5. Give each client their own agent.
