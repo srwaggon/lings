@@ -5,9 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 
-import tech.srwaggon.lings.net.GameServer;
+import tech.srwaggon.lings.net.server.GameServer;
 
 @SpringBootApplication
 public class Main {

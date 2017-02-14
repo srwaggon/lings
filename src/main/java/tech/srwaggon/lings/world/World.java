@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 @Component
@@ -29,8 +30,8 @@ public class World {
     return numRows;
   }
 
-
-  public World(EventBus eventBus) {
+  @PostConstruct
+  public void init() {
     numColumns = 40;
     numRows = 40;
     world = new Tile[numRows][numColumns];

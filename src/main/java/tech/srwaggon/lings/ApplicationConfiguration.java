@@ -11,8 +11,9 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfiguration {
 
   private final Logger logger = LoggerFactory.getLogger(ApplicationConfiguration.class);
-  @Bean
-  public EventBus getEventBus() {
+
+  @Bean(name = "gameEventBus")
+  public EventBus getGameEventBus() {
     return new EventBus() {
       @Override
       public void post(Object event) {
