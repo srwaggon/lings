@@ -11,61 +11,51 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import tech.srwaggon.lings.Game;
+import tech.srwaggon.lings.game.GameRunner;
 import tech.srwaggon.lings.net.Connection;
+import tech.srwaggon.lings.net.PlayerJoinedEvent;
 
 @Component
-public class GameServer {
+public class GameServer implements Runnable {
 
   @Inject
   private ExecutorService executorService;
   @Inject
   private EventBus eventBus;
   @Inject
-  private Game game;
+  private GameRunner gameRunner;
   @Inject
   private ServerSocket serverSocket;
 
   private Logger logger = LoggerFactory.getLogger(GameServer.class);
 
-  public void runOnline() {
-    addFoodEvery5sec();
+  @PostConstruct
+  public void init() {
+    executorService.submit(this);
+  }
 
-    game.getAgentManager().newAgent(0);
+  public void run() {
     try {
       while (true) {
         logger.info("Waiting for connection...");
         Socket accept = serverSocket.accept();
         handleConnection(accept);
+        Thread.sleep(100);
       }
-    } catch (IOException e) {
+    } catch (IOException | InterruptedException e) {
       e.printStackTrace();
     }
   }
 
-  private void addFoodEvery5sec() {
-    executorService.submit(() -> {
-      while (true) {
-        game.getWorld().getTile(getNum(), getNum()).addFood();
-        try {
-          Thread.sleep(10000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
-    });
-  }
-
   private void handleConnection(Socket socket) throws IOException {
-    logger.info("Client connected: " + socket.getInetAddress().getHostName());
-    ClientHandler clientHandler = new ClientHandler(new Connection(socket), game);
+    Connection connection = new Connection(socket);
+    logger.info("Client connected: " + connection.toString());
+    ClientHandler clientHandler = new ClientHandler(connection, gameRunner);
+    eventBus.post(new PlayerJoinedEvent(connection));
     eventBus.register(clientHandler);
     executorService.submit(clientHandler);
-  }
-
-  private int getNum() {
-    return (int) (Math.random() * game.getWorld().getNumColumns());
   }
 }

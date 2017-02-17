@@ -9,26 +9,24 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Queue;
 
-import tech.srwaggon.lings.Game;
-import tech.srwaggon.lings.entity.Agent;
+import tech.srwaggon.lings.game.Game;
+import tech.srwaggon.lings.game.GameRunner;
 import tech.srwaggon.lings.net.Connection;
 import tech.srwaggon.lings.net.message.ActionMessage;
 import tech.srwaggon.lings.net.message.FoodAppearedMessage;
-import tech.srwaggon.lings.net.message.IdMessage;
 import tech.srwaggon.lings.net.message.Message;
 import tech.srwaggon.lings.net.message.action.AbstractActionMessage;
 
 public class ClientHandler implements Runnable {
 
   private final Connection connection;
-  private final Game game;
+  private final GameRunner gameRunner;
 
   private final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
-  private int id;
 
-  public ClientHandler(Connection connection, Game game) throws IOException {
+  public ClientHandler(Connection connection, GameRunner gameRunner) throws IOException {
     this.connection = connection;
-    this.game = game;
+    this.gameRunner = gameRunner;
   }
 
   @Subscribe
@@ -44,22 +42,14 @@ public class ClientHandler implements Runnable {
   @Override
   public void run() {
     try {
-      id = game.getAgentManager().newAgent().getId();
-      sendMap();
-      sendEntities();
-      sendId();
       while (connection.isConnected()) {
-        handleAnyInput();
+        processMessages(readAllMessages());
         Thread.sleep(10);
       }
     } catch (IOException | InterruptedException e) {
       e.printStackTrace();
     }
     logger.info("Client disconnected: " + connection.toString());
-  }
-
-  private void handleAnyInput() throws IOException {
-    processMessages(readAllMessages());
   }
 
   private Queue<Message> readAllMessages() throws IOException {
@@ -75,35 +65,12 @@ public class ClientHandler implements Runnable {
     while ((inProcess = messages.poll()) != null) {
       String messageType = inProcess.getType();
       if (messageType.equals("action")) {
-        handleAction((ActionMessage) inProcess);
-        game.getWorld().print();
+        gameRunner.handleAction((ActionMessage) inProcess);
       } else if (messageType.equals("map")) {
-        sendMap();
+        gameRunner.sendMap(connection);
       } else if (messageType.equals("id")) {
-        sendId();
+        gameRunner.sendId(connection, 0);
       }
     }
-  }
-
-  private void handleAction(ActionMessage actionMessage) throws IOException {
-    actionMessage.getAction().perform(game);
-  }
-
-  private void sendMap() throws IOException {
-    connection.sendJson(game.getWorld());
-  }
-
-  private void sendId() {
-    connection.sendJson(new IdMessage(getId()));
-  }
-
-  private void sendEntities() throws IOException {
-    for (Agent agent : game.getAgentManager().getAgents().values()) {
-      connection.sendJson(agent);
-    }
-  }
-
-  private int getId() {
-    return id;
   }
 }

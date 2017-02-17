@@ -51,7 +51,7 @@ public class Connection {
   }
 
   public void send(String msg) {
-    logger.trace("sending: " + msg);
+    logger.trace(String.format("sending to %s: %s", this, msg));
     out.println(msg);
     out.flush();
   }
@@ -78,7 +78,7 @@ public class Connection {
 
   public String readLine() {
     String line = in.nextLine();
-    logger.trace("reading: " + line);
+    logger.trace("reading from %s: %s", this, line);
     return line;
   }
 
@@ -88,7 +88,7 @@ public class Connection {
 
   public void disconnect() {
     try {
-      logger.info("Disconnecting from " + this + ".");
+      logger.info(String.format("Disconnecting from %s.", this));
       if (in != null) {
         in.close();
       }

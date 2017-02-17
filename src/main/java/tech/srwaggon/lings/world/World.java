@@ -32,22 +32,12 @@ public class World {
 
   @PostConstruct
   public void init() {
-    numColumns = 40;
-    numRows = 40;
+    numColumns = 8;
+    numRows = 8;
     world = new Tile[numRows][numColumns];
     for (int y = 0; y < numRows; y++) {
       for (int x = 0; x < numColumns; x++) {
         world[y][x] = new Tile(x, y, eventBus);
-      }
-    }
-  }
-
-  public void forEach(Consumer<Tile> tileOperator) {
-    int numRows = world.length;
-    int numColumns = world[0].length;
-    for (int i = 0; i < numRows; i++) {
-      for (int j = 0; j < numColumns; j++) {
-        tileOperator.accept(world[i][j]);
       }
     }
   }
@@ -83,5 +73,9 @@ public class World {
       result.append("\n");
     }
     System.out.println(result.toString());
+  }
+
+  public void tick() {
+
   }
 }

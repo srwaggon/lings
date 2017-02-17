@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tech.srwaggon.lings.Game;
+import tech.srwaggon.lings.game.Game;
 import tech.srwaggon.lings.entity.Agent;
 
 @Data

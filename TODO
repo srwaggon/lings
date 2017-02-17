@@ -1,3 +1,5 @@
+#. Writing to a dead socket seems to not cause a problem
+#. Reading from a disconnected socket blocks.
 1. Handle removing old clients when socket disconnects.
 2. Remove entity from board when client disconnects.
 3. Add barriers tiles.

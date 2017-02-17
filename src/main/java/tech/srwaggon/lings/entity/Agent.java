@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
-import tech.srwaggon.lings.Game;
+import tech.srwaggon.lings.game.Game;
 import tech.srwaggon.lings.net.message.action.EatMessage;
 import tech.srwaggon.lings.net.message.action.MoveMessage;
 import tech.srwaggon.lings.world.Tile;

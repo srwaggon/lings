@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import lombok.Getter;
-import tech.srwaggon.lings.Game;
+import tech.srwaggon.lings.game.Game;
 
 @Component
 public class AgentManager {
