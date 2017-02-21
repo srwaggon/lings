@@ -54,9 +54,7 @@ public class ClientHandler implements Runnable {
 
   private Queue<Message> readAllMessages() throws IOException {
     Queue<Message> messages = Lists.newLinkedList();
-    if (connection.hasLine()) {
-      messages.add(connection.readJson(Message.class));
-    }
+    messages.add(connection.readJson(Message.class));
     return messages;
   }
 

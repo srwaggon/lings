@@ -4,6 +4,7 @@ version '1.0-SNAPSHOT'
 apply plugin: 'application'
 apply plugin: 'idea'
 apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
 
 sourceCompatibility = 1.8
 

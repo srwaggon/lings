@@ -29,7 +29,6 @@ public class Game implements Runnable {
   @Inject
   private World world;
 
-  private long lastTime = System.currentTimeMillis();
   private Collection<TimerTask> timerTasks = Lists.newLinkedList();
 
   public Map<Integer, Agent> getAgents() {
@@ -38,16 +37,19 @@ public class Game implements Runnable {
 
   @Override
   public void run() {
+    long lastTime = System.currentTimeMillis();
+    double unprocessed = 0;
     while (true) {
       now = System.currentTimeMillis();
       long timeDiff = now - lastTime;
-      double unprocessed = timeDiff / getMillisecondsPerTick();
-      while (unprocessed > 0) {
+      unprocessed += timeDiff / getMillisecondsPerTick();
+      while (unprocessed >= 1) {
         tick();
         unprocessed--;
+        lastTime = now;
       }
       try {
-        Thread.sleep(100);
+        Thread.sleep(10);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
