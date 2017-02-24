@@ -16,6 +16,7 @@ import tech.srwaggon.lings.net.Connection;
 import tech.srwaggon.lings.net.PlayerJoinedEvent;
 import tech.srwaggon.lings.net.message.ActionMessage;
 import tech.srwaggon.lings.net.message.IdMessage;
+import tech.srwaggon.lings.world.WorldMap;
 
 @Component
 public class GameRunner implements Runnable {
@@ -37,6 +38,7 @@ public class GameRunner implements Runnable {
   @Override
   public void run() {
     eventBus.register(this);
+    game.getWorld().add(WorldMap.parse("3 3 ........."));
     game.getAgentManager().newAgent(0);
     game.addTimerTask(addFoodIntervalTask());
     game.addTimerTask(addPrintWorldIntervalTask());
@@ -53,7 +55,7 @@ public class GameRunner implements Runnable {
   }
 
   public void sendMap(Connection connection) throws IOException {
-    connection.sendJson(game.getWorld());
+    connection.sendJson(game.getWorld().get(0));
   }
 
   public void sendId(Connection connection, int id) {
@@ -69,12 +71,13 @@ public class GameRunner implements Runnable {
   private TimerTask addPrintWorldIntervalTask() {
     return new TimerTask() {
       private long lastExecution = System.currentTimeMillis();
+
       @Override
       public void tick() {
         long now = System.currentTimeMillis();
         if (now - lastExecution > 3000) {
           System.out.print(game.currentTimeTicks() + "\t");
-          game.getWorld().print();
+          game.getWorld().get(0).print();
           lastExecution = now;
         }
       }
@@ -84,17 +87,18 @@ public class GameRunner implements Runnable {
   private TimerTask addFoodIntervalTask() {
     return new TimerTask() {
       private long lastExecution = System.currentTimeMillis();
+
       @Override
       public void tick() {
         long now = System.currentTimeMillis();
         if (now - lastExecution > 20000) {
-          game.getWorld().getTile(getNum(), getNum()).addFood();
+          game.getWorld().get(0).getTile(getNum(), getNum());
           lastExecution = now;
         }
       }
 
       private int getNum() {
-        return (int) (Math.random() * game.getWorld().getNumColumns());
+        return (int) (Math.random() * game.getWorld().get(0).getNumColumns());
       }
     };
   }

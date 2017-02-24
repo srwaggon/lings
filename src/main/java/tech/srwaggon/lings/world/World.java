@@ -1,81 +1,27 @@
 package tech.srwaggon.lings.world;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.collect.Maps;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.springframework.stereotype.Component;
+import java.util.Map;
 
-import java.util.function.Consumer;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-@Component
 public class World {
 
-  @Inject
-  private EventBus eventBus;
+  private Map<Integer, WorldMap> world = Maps.newHashMap();
 
-  private int numColumns;
-  private int numRows;
-  private Tile[][] world;
-
-  @JsonProperty(value = "columns")
-  public int getNumColumns() {
-    return numColumns;
+  public WorldMap get(int id) {
+    return world.get(id);
   }
 
-  @JsonProperty(value = "rows")
-  public int getNumRows() {
-    return numRows;
-  }
-
-  @PostConstruct
-  public void init() {
-    numColumns = 8;
-    numRows = 8;
-    world = new Tile[numRows][numColumns];
-    for (int y = 0; y < numRows; y++) {
-      for (int x = 0; x < numColumns; x++) {
-        world[y][x] = new Tile(x, y, eventBus);
-      }
-    }
-  }
-
-  public String getType() {
-    return "map";
-  }
-
-  @JsonProperty(value = "map")
-  public String getTilesAsString() {
-    String result = "";
-    for (Tile[] tileArray : world) {
-      for (Tile tile : tileArray) {
-        result += tile.getSymbol() + "";
-      }
-    }
-    return result;
-  }
-
-  public Tile getTile(int x, int y) {
-    return world[y % getNumRows()][x % getNumColumns()];
-  }
-
-  public void print() {
-    StringBuilder result = new StringBuilder();
-    result.append("====================================\n");
-    for (int y = 0; y < numRows; y++) {
-      for (int x = 0; x < numColumns; x++) {
-        Tile tile = world[y][x];
-
-        result.append(tile.isOccupied() ? tile.getOccupant().getId() + " " : tile.getSymbol() + " ");
-      }
-      result.append("\n");
-    }
-    System.out.println(result.toString());
+  public void add(WorldMap map) {
+    int id = world.size();
+    map.setId(id);
+    this.world.put(id, map);
   }
 
   public void tick() {
-
+    for (WorldMap map :
+        world.values()) {
+      map.tick();
+    }
   }
 }

@@ -13,6 +13,7 @@ import lombok.Data;
 import tech.srwaggon.lings.entity.Agent;
 import tech.srwaggon.lings.entity.AgentManager;
 import tech.srwaggon.lings.world.World;
+import tech.srwaggon.lings.world.WorldMap;
 
 @Component
 @Data
@@ -26,8 +27,7 @@ public class Game implements Runnable {
   @Inject
   private AgentManager agentManager;
 
-  @Inject
-  private World world;
+  private final World world = new World();
 
   private Collection<TimerTask> timerTasks = Lists.newLinkedList();
 
