@@ -37,12 +37,12 @@ public class GameRunner implements Runnable {
 
   @Override
   public void run() {
-    eventBus.register(this);
-    game.getWorld().add(WorldMap.parse("3 3 ........."));
-    game.getAgentManager().newAgent(0);
-    game.addTimerTask(addFoodIntervalTask());
-    game.addTimerTask(addPrintWorldIntervalTask());
-    game.run();
+//    eventBus.register(this);
+//    game.getWorld().add(WorldMap.parse("3 3 ........."));
+//    game.getAgentManager().newAgent(0);
+//    game.addTimerTask(addFoodIntervalTask());
+//    game.addTimerTask(addPrintWorldIntervalTask());
+//    game.run();
   }
 
   @Subscribe

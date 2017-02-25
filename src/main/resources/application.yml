@@ -1,1 +1,2 @@
 logging.level.tech.srwaggon: trace
+server.port: 8080

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Queue;
 
-import tech.srwaggon.lings.game.Game;
 import tech.srwaggon.lings.game.GameRunner;
 import tech.srwaggon.lings.net.Connection;
 import tech.srwaggon.lings.net.message.ActionMessage;
